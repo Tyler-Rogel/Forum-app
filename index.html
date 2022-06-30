@@ -11,7 +11,7 @@
 <div id="app">
      
 <!-- sign up page -->
-    <div v-if="page == 'signupPage'">
+    <div v-if="page == 'signupPage'" :style="">
         <h1>Registration Form</h1>
         <input v-model="newEmailInput" placeholder="email"><br>
         <input v-model="newPasswordInput" placeholder="password"><br>
@@ -28,10 +28,14 @@
     <button @click="page = 'signupPage'">Make an Account</button>
     </div>
 <!-- home page -->
-    <div v-else>
+    <div v-if="loginCookies">
         <h1>Logged in</h1>
-
-
+        <button>Create post</button>
+        <div class="threads" v-for="thread in threads">
+        <h3>{{thread.name}}</h3>
+        <p>{{thread.description}}</p>
+        <b>{{thread.category}}</b>
+    </div>
 
     </div>
 

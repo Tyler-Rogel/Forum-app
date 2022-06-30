@@ -9,6 +9,12 @@ var app = new Vue({
         newEmailInput: "",
         newPasswordInput:"",
         newFullnameInput: "",
+        
+        threadNameInput: "",
+        threadCategoryInput: "",
+        threadDescriptionInput: "",
+
+        threads: [],
 
         page: "loginPage",
 
@@ -29,6 +35,7 @@ var app = new Vue({
             console.log(data);
             this.loginCookies = true;
             this.loggedinUser = this.loginEmailInput;
+            this.getThread();   
            } else if (response.status == 401){
             console.log("Not Logged In")
             let data = await response.json();
@@ -76,6 +83,7 @@ var app = new Vue({
             } else {
                 console.log("some error when POSTING /session:", response.status, response);
             }
+            this.getSession();
         },
         
         postUser: async function () {
@@ -100,6 +108,44 @@ var app = new Vue({
 
            
         },
+        getThread: async function () {
+                let response = await fetch(`${URL}/thread`,{
+                    credentials: "include"
+                });
+
+               //check response status
+               if (response.status == 200){
+                console.log("all good");
+                let body = await response.json();
+                this.threads = body;
+                
+               } else {
+                console.log("Some sort of Error when GETTING /thread:" , response.status);
+               }
+            },
+            postThread: async function () {
+                let newThread = {
+                    name: this.threadNameInput,
+                    description: this.threadDescriptionInput,
+                    category: this.threadCategoryInput,
+
+                };
+    
+                let response = await fetch(`${URL}/user`,{
+                    method: "POST",
+                    body: JSON.stringify(newCredentials),
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    credentials: "include"
+                });
+    
+                //parse response body
+                let body = response.json();
+                console.log(body);
+    
+               
+            },
         
     },
     created: function () {
