@@ -28,16 +28,35 @@
     <button @click="page = 'signupPage'">Make an Account</button>
     </div>
 <!-- home page -->
-    <div v-if="loginCookies">
-        <h1>Logged in</h1>
-        <button>Create post</button>
-        <div class="threads" v-for="thread in threads">
-        <h3>{{thread.name}}</h3>
+    <div v-if="loginCookies && page == 'homePage'">
+        <h1>Home Page</h1>
+        <button @click="page = 'createThreadPage'">Create post</button>
+        <!-- creating thread -->
+        <div v-if="page == 'createThreadPage'">
+        <input v-model="threadNameInput" placeholder="Name">
+        <input v-model="threadDescriptionInput" placeholder="Description">
+        <input v-model="threadCategoryInput" placeholder="Category">
+        <button @click="postThread(); page = 'homePage'">Post thread</button>
+        </div>
+        <!-- threads -->
+            <div class="threads" v-for="thread in threads">
+        <h3 @click="getSingleThread(thread._id)">{{thread.name}}</h3>
         <p>{{thread.description}}</p>
         <b>{{thread.category}}</b>
-    </div>
+            </div>
 
     </div>
+    <!-- single thread page -->
+    <div v-if="page == 'singleThreadPage'">
+        <button @click="page = 'homePage'">Back</button>
+        <h3>{{singleThread.name}}</h3>
+        <p>{{singleThread.description}}</p>
+        <b>{{singleThread.category}}</b>
+        <!-- <p>{{singleThread.post}}</p> -->
+
+    </div>
+
+
 
 </div>
     <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>

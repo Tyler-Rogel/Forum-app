@@ -11,10 +11,13 @@ var app = new Vue({
         newFullnameInput: "",
         
         threadNameInput: "",
-        threadCategoryInput: "",
         threadDescriptionInput: "",
+        threadCategoryInput: "",
 
         threads: [],
+        singleThread: {},
+
+        creatingThread: false,
 
         page: "loginPage",
 
@@ -35,6 +38,7 @@ var app = new Vue({
             console.log(data);
             this.loginCookies = true;
             this.loggedinUser = this.loginEmailInput;
+            this.page = "homePage"
             this.getThread();   
            } else if (response.status == 401){
             console.log("Not Logged In")
@@ -72,7 +76,7 @@ var app = new Vue({
                 this.loggedinUser = this.loginEmailInput;
                 this.loginEmailInput = "";
                 this.loginPasswordInput = "";
-                this. page = "loggedinPage";
+                this.page = "homePage";
             
             } else if (response.status == 401){
                 //tell the user its a bad login
@@ -123,6 +127,23 @@ var app = new Vue({
                 console.log("Some sort of Error when GETTING /thread:" , response.status);
                }
             },
+            getSingleThread: async function (id) {
+              
+                let response = await fetch(`${URL}/thread/${id}`,{
+                    credentials: "include"
+                });
+
+               //check response status
+               if (response.status == 200){
+                console.log("all good");
+                let body = await response.json();
+                this.singleThread = body;
+                this.page = "singleThreadPage"
+                
+               } else {
+                console.log("Some sort of Error when GETTING /thread/_id:" , response.status);
+               }
+            },
             postThread: async function () {
                 let newThread = {
                     name: this.threadNameInput,
@@ -130,15 +151,27 @@ var app = new Vue({
                     category: this.threadCategoryInput,
 
                 };
+                this.threadNameInput = "";
+                this.threadDescriptionInput ="";
+                this.threadCategoryInput="";
+
     
-                let response = await fetch(`${URL}/user`,{
+                let response = await fetch(`${URL}/thread`,{
                     method: "POST",
-                    body: JSON.stringify(newCredentials),
+                    body: JSON.stringify(newThread),
                     headers: {
                         "Content-Type": "application/json"
                     },
                     credentials: "include"
                 });
+                if (response.status == 201){
+                    console.log("thread made");
+                   this.getThread();
+                    
+                   } else {
+                    console.log("Some sort of Error when POSTING /thread:" , response.status);
+                    this.getThread();
+                   }
     
                 //parse response body
                 let body = response.json();
